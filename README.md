@@ -1,4 +1,4 @@
-# natural-earth
+# datasette example that computes distance to coastline
 
 ## Instructions
 
