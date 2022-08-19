@@ -1,0 +1,15 @@
+---
+title: Distance to Coastline
+databases:
+  coast:
+    queries:
+      nearest_coast:
+        sql: |-
+          with params(pos) as (select GeomFromText('POINT('|| :longitude || ' ' || :latitude || ')'))
+          select distance/1000.0 distance_km, AsGeoJSON(st_shortestline((select pos from params), geometry)) shortest_line 
+            from knn join coast as c on knn.fid = c.rowid 
+            where f_table_name = 'coast' 
+          and ref_geometry = (select pos from params) 
+          and max_items = 1
+        title: find nearest coastline
+        description: ''
