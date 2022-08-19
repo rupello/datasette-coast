@@ -2,12 +2,12 @@
 
 ## Instructions
 
-0. create database
+0. create database (has issues...)
 ```shell
 mkdir -p temp
 cd temp && curl -LO https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_coastline.zip
 # or
-cd temp && curl -LO https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_coastline.zip
+cd temp && curl -LO https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_coastline.zip
 unzip ne_110m_coastline.zip && cd ..
 
 spatialite dataset/coast.db
