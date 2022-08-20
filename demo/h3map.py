@@ -1,3 +1,8 @@
+"""
+    generates a csv of h3 locations with distance to nearest coast
+
+    todo: use tasky.py?
+"""
 import asyncio
 import aiohttp
 import h3
