@@ -20,3 +20,7 @@ spatialite dataset/coast.db
 you should see something like
 
 ![images/screenshot.png]![](images/screenshot.png)
+
+Demo showing values mapped over the Aegean Sea
+
+![](images/aegean.png)
