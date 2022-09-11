@@ -13,3 +13,13 @@ databases:
           and max_items = 1
         title: find nearest coastline
         description: ''
+      nearest_town:
+        sql: |-
+          with params(pos) as (select GeomFromText('POINT('|| :longitude || ' ' || :latitude || ')'))
+          select distance/1000.0 distance_km, AsGeoJSON(st_shortestline((select pos from params), geometry)) shortest_line, * 
+            from knn join cities1000 as c on knn.fid = c.id 
+            where f_table_name = 'cities1000' 
+          and ref_geometry = (select pos from params) 
+          and max_items = 1
+        title: find nearest town with population > 1000
+        description: ''
