@@ -17,4 +17,4 @@ COPY --from=builder ./ne.sqlite ./
 ADD datasette/metadata.yaml metadata.yaml
 ADD datasette/templates templates
 
-CMD datasette -m /metadata.yaml -p 8001 -h 0.0.0.0 --template-dir=/templates --load-extension=spatialite /ne.sqlite
+CMD datasette -m /metadata.yaml -p 8001 -h 0.0.0.0 --setting sql_time_limit_ms 15000 --template-dir=/templates --load-extension=spatialite /ne.sqlite
