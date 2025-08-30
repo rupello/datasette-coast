@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # natural earth coastlines
-wget --quiet https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_coastline.zip
+wget --quiet https://naciscdn.org/naturalearth/10m/physical/ne_10m_coastline.zip 
 unzip ne_10m_coastline.zip
 # load directly as shapefile & index
 spatialite ne.sqlite << _commands
@@ -19,4 +19,14 @@ echo "ingesting to sqlite..."
 geojson-to-sqlite --nl --pk=id --spatialite ne.sqlite cities1000 cities1000.geojson
 spatialite ne.sqlite << _commands
 select CreateSpatialIndex("cities1000", "geometry");
+_commands
+
+# natural earth ports
+wget --quiet https://naciscdn.org/naturalearth/10m/cultural/ne_10m_ports.zip
+unzip ne_10m_ports.zip
+# load directly as shapefile & index
+spatialite ne.sqlite << _commands
+-- load shapefile
+.loadshp ne_10m_ports ne_10m_ports utf-8 4326
+select CreateSpatialIndex("ne_10m_ports", "geometry");
 _commands
