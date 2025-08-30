@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # natural earth coastlines
-wget --quiet https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_coastline.zip
+wget --quiet https://naciscdn.org/naturalearth/10m/physical/ne_10m_coastline.zip 
 unzip ne_10m_coastline.zip
 # load directly as shapefile & index
 spatialite ne.sqlite << _commands
