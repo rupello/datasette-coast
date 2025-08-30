@@ -23,3 +23,13 @@ databases:
           and max_items = 1
         title: find nearest town with population > 1000
         description: ''
+      nearest_port:
+        sql: |-
+          with params(pos) as (select GeomFromText('POINT('|| :longitude || ' ' || :latitude || ')'))
+          select distance/1000.0 distance_km, AsGeoJSON(st_shortestline((select pos from params), geometry)) shortest_line 
+            from knn join ne_10m_port as c on knn.fid = c.rowid 
+            where f_table_name = 'ne_10m_ports' 
+          and ref_geometry = (select pos from params) 
+          and max_items = 1
+        title: find nearest port
+        description: ''
