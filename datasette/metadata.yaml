@@ -58,6 +58,41 @@ databases:
           and max_items = 1
         title: find nearest town with population > 1000
         description: ''
+      nearest_town_multi:
+        sql: |
+          with coordinate_list as (
+            select 
+              json_extract(value, '$[0]') as longitude,
+              json_extract(value, '$[1]') as latitude,
+              row_number() over () as coord_id
+            from json_each(:coordinates_json)
+          ),
+          params as (
+            select 
+              coord_id,
+              longitude,
+              latitude,
+              GeomFromText('POINT(' || longitude || ' ' || latitude || ')') as pos
+            from coordinate_list
+            where longitude is not null and latitude is not null
+          )
+          select 
+            p.coord_id,
+            p.longitude,
+            p.latitude,
+            knn.distance/1000.0 as distance_km,
+            AsGeoJSON(st_shortestline(p.pos, c.geometry)) as shortest_line,
+            c.*
+          from params p
+          cross join knn 
+          join cities1000 as c on knn.fid = c.id 
+          where f_table_name = 'cities1000' 
+            and ref_geometry = p.pos
+            and max_items = 1
+          order by p.coord_id
+        title: "Find Nearest Towns (list of JSON Format coordinates)"
+        description: |
+          Enter coordinates as JSON array: [[-74.006,40.7128],[-118.2437,34.0522],[-87.6298,41.8781]]
       nearest_port:
         sql: |-
           with params(pos) as (select GeomFromText('POINT('|| :longitude || ' ' || :latitude || ')'))
@@ -68,3 +103,38 @@ databases:
           and max_items = 1
         title: find nearest port
         description: ''
+      nearest_port_multi:
+        sql: |
+          with coordinate_list as (
+            select 
+              json_extract(value, '$[0]') as longitude,
+              json_extract(value, '$[1]') as latitude,
+              row_number() over () as coord_id
+            from json_each(:coordinates_json)
+          ),
+          params as (
+            select 
+              coord_id,
+              longitude,
+              latitude,
+              GeomFromText('POINT(' || longitude || ' ' || latitude || ')') as pos
+            from coordinate_list
+            where longitude is not null and latitude is not null
+          )
+          select 
+            p.coord_id,
+            p.longitude,
+            p.latitude,
+            c.name,
+            knn.distance/1000.0 as distance_km,
+            AsGeoJSON(st_shortestline(p.pos, c.geometry)) as shortest_line
+          from params p
+          cross join knn 
+          join ne_10m_ports as c on knn.fid = c.rowid 
+          where f_table_name = 'ne_10m_ports' 
+            and ref_geometry = p.pos
+            and max_items = 1
+          order by p.coord_id
+        title: "Find Nearest Ports (list of JSON Format coordinates)"
+        description: |
+          Enter coordinates as JSON array: [[-74.006,40.7128],[-118.2437,34.0522],[-87.6298,41.8781]]
